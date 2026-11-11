@@ -151,12 +151,13 @@ body, .workbench { transition: background-color 220ms ease, color 220ms ease, bo
 .strength-bars i:nth-child(2) { animation-delay: 35ms; }
 .strength-bars i:nth-child(3) { animation-delay: 70ms; }
 .strength-bars i:nth-child(4) { animation-delay: 105ms; }
-[data-slot="toast-viewport"] { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
-[data-slot="toast"][data-state="open"] { animation: content-enter 220ms var(--motion-ease); }
+[data-slot="toast-viewport"] { padding-top: max(1rem, env(safe-area-inset-top)); }
+[data-slot="toast"][data-state="open"] { animation: toast-enter 220ms var(--motion-ease); }
 [data-slot="toast"][data-state="closed"] { animation: toast-exit 160ms ease-in forwards; }
 [data-slot="toast"][data-swipe="cancel"] { transform: translateX(0); transition: transform 180ms var(--motion-ease); }
 [data-slot="toast"][data-swipe="end"] { animation: toast-swipe-exit 160ms ease-out forwards; }
-@keyframes toast-exit { to { opacity: 0; transform: translateY(6px); } }
+@keyframes toast-enter { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+@keyframes toast-exit { to { opacity: 0; transform: translateY(-6px); } }
 @keyframes toast-swipe-exit { from { transform: translateX(var(--radix-toast-swipe-end-x)); } to { opacity: 0; transform: translateX(110%); } }
 .radio-option { transition: background-color 180ms ease, border-color 180ms ease; }
 .radio-option:has([data-state="checked"]) { border-color: color-mix(in srgb, var(--primary) 45%, var(--border)); }

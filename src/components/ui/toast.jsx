@@ -7,7 +7,7 @@ const ToastProvider = ToastPrimitive.Provider;
 
 const ToastViewport = React.forwardRef(({ className, ...props }, ref) => (
   <ToastPrimitive.Viewport ref={ref} data-slot="toast-viewport" className={cn(
-    'fixed inset-x-0 bottom-0 z-[100] mx-auto flex max-h-screen w-full max-w-[420px] list-none flex-col gap-2 p-4 outline-none', className,
+    'fixed inset-x-0 top-0 z-[100] mx-auto flex max-h-screen w-full max-w-[420px] list-none flex-col gap-2 p-4 outline-none', className,
   )} {...props} />
 ));
 ToastViewport.displayName = ToastPrimitive.Viewport.displayName;
