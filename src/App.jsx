@@ -240,7 +240,7 @@ export function App() {
             <span id="strength-label">{rating?.label ?? '未生成'}</span>
             <span key={revision} className="strength-bars" data-weak={rating?.level < 3} aria-hidden="true">{[0, 1, 2, 3].map((index) => <i key={index} className={index < rating?.level ? 'active' : ''} />)}</span>
           </span>
-          <span id="result-meta" className="font-mono text-[11px] text-muted-foreground">{result ? `${result.value.length} 位 · ≈ ${Math.floor(result.entropy)} bits` : ''}</span>
+          <span id="result-meta" className="font-mono text-[11px] text-muted-foreground">{result ? `${result.value.length} 位 ≈ ${Math.floor(result.entropy)} bits` : ''}</span>
         </div>
         <div className="flex gap-2.5">
           <Button id="copy" variant="outline" data-copied={copied} className="copy-action h-10 flex-1 gap-2 font-normal" onClick={copy} disabled={!result || copyPending}>
