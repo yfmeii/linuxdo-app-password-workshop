@@ -1,0 +1,45 @@
+name: Release
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: read
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm install --global npm@11.12.1
+      - run: npm ci
+      - run: npm run setup:pack
+      - run: npm test
+      - run: |
+          node scripts/build-wordlist.mjs
+          node scripts/build-pinyin-wordlists.mjs
+          git diff --exit-code -- src/words.json src/pinyin-words.json
+      - run: npm run release:build
+      - uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2
+        with:
+          subject-path: dist/package/*
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          gh release create "$RELEASE_TAG" \
+            dist/package/app.zip \
+            dist/package/release-manifest.json \
+            dist/package/source-manifest.json \
+            dist/package/build-info.json \
+            dist/package/SHA256SUMS \
+            --verify-tag --title "密码工坊 $RELEASE_TAG" --notes-file docs/release-notes.md

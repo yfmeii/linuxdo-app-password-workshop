@@ -1,0 +1,15 @@
+node_modules/
+dist/
+output/
+.DS_Store
+.cache/
+.env
+.env.*
+!.env.example
+*.log
+*.pem
+*.key
+.coverage/
+coverage/
+/branding/
+/vendor/sdk/

@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "id": "01a1c937-cdf6-76d3-bf37-21401de9bd8e",
+  "name": "密码工坊",
+  "version": "1.1.0",
+  "entry": "index.html",
+  "script": "app.js",
+  "style": "app.css",
+  "permissions": ["theme.read", "clipboard.write", "links.open"],
+  "links": [
+    "https://github.com/yfmeii/linuxdo-app-password-workshop",
+    "https://github.com/yfmeii/linuxdo-app-password-workshop/releases/tag/v1.1.0"
+  ]
+}
