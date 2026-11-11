@@ -20,7 +20,7 @@
   --color-accent-foreground: var(--foreground);
   --color-destructive: var(--destructive);
   --color-border: var(--border);
-  --color-input: var(--border);
+  --color-input: var(--input);
   --color-ring: var(--primary);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -40,6 +40,7 @@
   --muted: #f4f5f4;
   --muted-foreground: #6d7570;
   --border: #e4e7e5;
+  --input: #7c857f;
   --primary: #258355;
   --primary-foreground: #ffffff;
   --destructive: #b45327;
@@ -55,6 +56,7 @@
   --muted: #242825;
   --muted-foreground: #a1aaa4;
   --border: #303631;
+  --input: #758279;
   --primary: #78c69a;
   --primary-foreground: #18251d;
   --destructive: #e9ab82;
@@ -69,6 +71,7 @@
   --primary: var(--community-accent);
   --primary-foreground: var(--community-background);
   --border: var(--community-border);
+  --input: var(--community-text);
   --muted: color-mix(in srgb, var(--community-text) 6%, var(--community-background));
   --muted-foreground: color-mix(in srgb, var(--community-text) 70%, var(--community-background));
   --password-symbol: var(--muted-foreground);

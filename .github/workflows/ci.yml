@@ -23,3 +23,5 @@ jobs:
           node scripts/build-pinyin-wordlists.mjs
           git diff --exit-code -- src/words.json src/pinyin-words.json
       - run: npm run package
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:ui

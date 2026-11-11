@@ -136,6 +136,7 @@ export function App() {
     try {
       await copyPassword(snapshot.value, sdk);
       if (snapshot === stateRef.current.result) {
+        clearTimeout(copyTimer.current);
         setCopied(true);
         notify('已复制到剪贴板。', 'success');
         copyTimer.current = setTimeout(() => setCopied(false), 2200);
@@ -154,8 +155,10 @@ export function App() {
     let disposed = false;
     let unsubscribe = () => {};
     let hostTheme = false;
+    let hostPending = Boolean(sdk);
     const systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
     function applyTheme(theme) {
+      if (disposed) return;
       hostTheme = true;
       const root = document.documentElement;
       root.classList.toggle('dark', theme.mode === 'dark');
@@ -171,12 +174,16 @@ export function App() {
       root.toggleAttribute('data-community-theme', hasPalette);
     }
     function onSystemTheme(event) {
-      if (!hostTheme) document.documentElement.classList.toggle('dark', event.matches);
+      if (!hostTheme && !hostPending) document.documentElement.classList.toggle('dark', event.matches);
     }
     async function initializeHost() {
       const cleanup = await connectHost(sdk, applyTheme, (message) => { if (!disposed) notify(message, 'error'); });
       if (disposed) cleanup();
-      else unsubscribe = cleanup;
+      else {
+        unsubscribe = cleanup;
+        hostPending = false;
+        onSystemTheme(systemTheme);
+      }
     }
     function pagehide() {
       clearTimeout(copyTimer.current);
@@ -215,10 +222,10 @@ export function App() {
           <TabsList className="mode-tabs mb-6 grid h-10 w-full grid-cols-3" aria-label="密码类型" data-mode={mode}>
             <span className="mode-indicator" aria-hidden="true" />
             {Object.entries(modes).map(([key, { label, icon: Icon }]) => (
-              <TabsTrigger key={key} value={key} className="gap-1.5 text-xs data-[state=active]:text-primary dark:data-[state=active]:text-primary sm:text-[13px]"><Icon className="size-4" aria-hidden="true" />{label}</TabsTrigger>
+              <TabsTrigger key={key} value={key} id={`mode-${key}`} aria-controls="mode-panel" className="gap-1.5 text-xs data-[state=active]:text-primary dark:data-[state=active]:text-primary sm:text-[13px]"><Icon className="size-4" aria-hidden="true" />{label}</TabsTrigger>
             ))}
           </TabsList>
-          {Object.keys(modes).map((key) => <TabsContent key={key} value={key} className="mode-panel">{key === mode && <>
+          <TabsContent value={mode} forceMount id="mode-panel" aria-labelledby={`mode-${mode}`} className="mode-panel">
 
         <div className="mb-2 flex items-center justify-between">
           <Label id="result-label" className="gap-2 text-xs font-normal text-muted-foreground"><KeyRound aria-hidden="true" className="size-3.5" />生成结果</Label>
@@ -228,8 +235,10 @@ export function App() {
         </div>
         <div className="result-frame flex min-h-28 items-center rounded-lg border px-4 py-5 sm:px-5">
           {!hidden && result && <span key={revision} className="result-glint" aria-hidden="true" />}
-          <output key={`${revision}-${hidden}`} id="password" aria-labelledby="result-label" tabIndex={0} translate="no" className={`password-display block w-full ${mode} ${!hidden && result ? 'password-refresh' : ''}`}>
-            <Password result={result} hidden={hidden} separator={mode === 'memorable' ? config.separator : undefined} />
+          <output id="password" aria-labelledby="result-label" aria-live="polite" aria-atomic="true" tabIndex={0} translate="no" className={`password-display block w-full ${mode}`}>
+            <span key={`${revision}-${hidden}`} className={`block ${!hidden && result ? 'password-refresh' : ''}`}>
+              <Password result={result} hidden={hidden} separator={mode === 'memorable' ? config.separator : undefined} />
+            </span>
           </output>
         </div>
         {!hidden && result?.mnemonic && <p aria-label="记忆提示" className="mt-2 break-words text-xs leading-6 text-muted-foreground">{result.mnemonic}</p>}
@@ -305,7 +314,7 @@ export function App() {
         </div>}
 
         {mode === 'pin' && <p id="pin-settings" className="mt-5 flex items-start gap-2 text-xs leading-6 text-muted-foreground"><Info className="mt-1 size-4 shrink-0" aria-hidden="true" /><span>PIN 适合有尝试次数限制的设备解锁等场景。账号密码建议选择随机密码或易记密码。</span></p>}
-          </>}</TabsContent>)}
+          </TabsContent>
         </Tabs>
       </section>
 
